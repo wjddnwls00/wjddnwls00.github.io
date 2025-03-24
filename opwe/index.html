@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024-2025 학생회 프리즘 회의 일정</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 500px; margin: auto; }
+        input, select, button { width: 100%; margin: 5px 0; padding: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>회의실 예약</h2>
+        <input type="date" id="date">
+        <input type="time" id="time">
+        <select id="room">
+            <option value="자치회실">자치회실</option>
+            <option value="한울">한울</option>
+        </select>
+        <input type="text" id="name" placeholder="부서 이름">
+        <button onclick="makeReservation()">예약하기</button>
+        
+        <h3>예약 목록</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>날짜</th>
+                    <th>시간</th>
+                    <th>회의실</th>
+                    <th>예약자</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody id="reservation-list">
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        let reservations = JSON.parse(localStorage.getItem("reservations")) || [];
+        updateReservationList();
+        
+        function makeReservation() {
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+            let room = document.getElementById("room").value;
+            let name = document.getElementById("name").value;
+            
+            if (!date || !time || !name) {
+                alert("모든 항목을 입력하세요.");
+                return;
+            }
+            
+            reservations.push({ date, time, room, name });
+            localStorage.setItem("reservations", JSON.stringify(reservations));
+            updateReservationList();
+        }
+        
+        function updateReservationList() {
+            let list = document.getElementById("reservation-list");
+            list.innerHTML = "";
+            reservations.forEach((res, index) => {
+                let row = `<tr>
+                    <td>${res.date}</td>
+                    <td>${res.time}</td>
+                    <td>${res.room}</td>
+                    <td>${res.name}</td>
+                    <td><button onclick="deleteReservation(${index})">삭제</button></td>
+                </tr>`;
+                list.innerHTML += row;
+            });
+        }
+        
+        function deleteReservation(index) {
+            reservations.splice(index, 1);
+            localStorage.setItem("reservations", JSON.stringify(reservations));
+            updateReservationList();
+        }
+    </script>
+</body>
+</html>
