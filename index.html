@@ -3,7 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2024-2025 학생회 프리즘 회의 일정</title>
+    <title>우산 대여 서비스</title>
+    <script>
+        window.rentUmbrella = function() {
+            let date = document.getElementById("date").value;
+            let name = document.getElementById("name").value;
+            let grade = document.getElementById("grade").value;
+            let classNum = document.getElementById("classNum").value;
+            
+            if (!date || !name || !grade || !classNum) {
+                alert("모든 항목을 입력하세요.");
+                return;
+            }
+
+            let list = document.getElementById("rental-list");
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${name}</td>
+                <td>${grade}학년 ${classNum}반</td>
+                <td><button onclick="this.parentElement.parentElement.remove()">반납</button></td>
+            `;
+            list.appendChild(row);
+        };
+    </script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         .container { max-width: 500px; margin: auto; }
@@ -14,72 +37,35 @@
 </head>
 <body>
     <div class="container">
-        <h2>회의실 예약</h2>
+        <h2>우산 대여</h2>
         <input type="date" id="date">
-        <input type="time" id="time">
-        <select id="room">
-            <option value="자치회실">자치회실</option>
-            <option value="한울">한울</option>
+        <input type="text" id="name" placeholder="대여자 이름">
+        <select id="grade">
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
         </select>
-        <input type="text" id="name" placeholder="부서 이름">
-        <button onclick="makeReservation()">예약하기</button>
+        <select id="classNum">
+            <option value="1">1반</option>
+            <option value="2">2반</option>
+            <option value="3">3반</option>
+            <option value="4">4반</option>
+        </select>
+        <button onclick="rentUmbrella()">대여하기</button>
         
-        <h3>예약 목록</h3>
+        <h3>대여 목록</h3>
         <table>
             <thead>
                 <tr>
                     <th>날짜</th>
-                    <th>시간</th>
-                    <th>회의실</th>
-                    <th>예약자</th>
-                    <th>삭제</th>
+                    <th>대여자</th>
+                    <th>학년/반</th>
+                    <th>반납</th>
                 </tr>
             </thead>
-            <tbody id="reservation-list">
+            <tbody id="rental-list">
             </tbody>
         </table>
     </div>
-    
-    <script>
-        let reservations = JSON.parse(localStorage.getItem("reservations")) || [];
-        updateReservationList();
-        
-        function makeReservation() {
-            let date = document.getElementById("date").value;
-            let time = document.getElementById("time").value;
-            let room = document.getElementById("room").value;
-            let name = document.getElementById("name").value;
-            
-            if (!date || !time || !name) {
-                alert("모든 항목을 입력하세요.");
-                return;
-            }
-            
-            reservations.push({ date, time, room, name });
-            localStorage.setItem("reservations", JSON.stringify(reservations));
-            updateReservationList();
-        }
-        
-        function updateReservationList() {
-            let list = document.getElementById("reservation-list");
-            list.innerHTML = "";
-            reservations.forEach((res, index) => {
-                let row = `<tr>
-                    <td>${res.date}</td>
-                    <td>${res.time}</td>
-                    <td>${res.room}</td>
-                    <td>${res.name}</td>
-                    <td><button onclick="deleteReservation(${index})">삭제</button></td>
-                </tr>`;
-                list.innerHTML += row;
-            });
-        }
-        
-        function deleteReservation(index) {
-            reservations.splice(index, 1);
-            localStorage.setItem("reservations", JSON.stringify(reservations));
-            updateReservationList();
-        }
-    </script>
 </body>
 </html>
